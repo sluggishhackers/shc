@@ -11,3 +11,13 @@
 | '--------------' || '--------------' || '--------------' |
  '----------------'  '----------------'  '----------------'
 ```
+
+Sluggish Hackers Crawler
+---
+
+Sluggish Hackers 커뮤니티에서 개발 & 관리하는 CLI 크롤 도구입니다.
+
+Targets
+---
+
+- [대전광역시 위원회 현황](https://www.daejeon.go.kr/drh/acm/drhAcmBoardList.do)
