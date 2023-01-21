@@ -1,11 +1,14 @@
-import { daily } from "https://deno.land/x/deno_cron@v1.0.0/cron.ts";
+import { cron } from "https://deno.land/x/deno_cron@v1.0.0/cron.ts";
 import "https://deno.land/x/dotenv@v3.2.0/load.ts";
 
 import database from "../database/client.ts";
 import * as fetchForDaejeonCommittees from "../clients/daejeon-committees/fetch.ts";
 import * as parserForDaejeonCommittes from "../clients/daejeon-committees/parser.ts";
+import { sendMessage } from "../utils/slack.ts";
 
 const main = async () => {
+  sendMessage({ text: "lc-committees scheduler is running." });
+
   const html = await fetchForDaejeonCommittees.fetchLocalCommittees({
     page: 1,
   });
@@ -41,6 +44,6 @@ const main = async () => {
   }
 };
 
-daily(async () => {
+cron("1 */10 * * * *", async () => {
   await main();
 });
