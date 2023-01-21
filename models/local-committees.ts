@@ -1,11 +1,11 @@
 export type LocalCommittee = {
-  num: number;
+  id?: number;
   category: string;
   title: string;
   roles: string;
   createdDate: string; // YYYY-MM-DD
   department: string;
-  link: string;
+  code: string;
 };
 
 type SexRatio = {
@@ -28,8 +28,8 @@ export type LocalCommitteeDetail = {
   basis: string;
   purpose: string;
   roles: string;
-  createdDate: string; // YYYY-MM-DD
-  revocatedDate: string;
+  createdDate: string | null; // YYYY-MM-DD
+  revocatedDate: string | null;
   status: string;
   sexRatio: {
     civilServant: { [key in PositionsForSexRatio]: SexRatio };

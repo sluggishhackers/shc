@@ -38,8 +38,8 @@ export const parseLocalCommitteeDetail = (
     basis: "",
     purpose: "",
     roles: "",
-    createdDate: "",
-    revocatedDate: "",
+    createdDate: null,
+    revocatedDate: null,
     status: "",
     sexRatio: {
       civilServant: initPositionsForSexRatio(),
@@ -100,9 +100,8 @@ export const parseLocalCommitteeDetail = (
           .textContent.trim();
         break;
       case "폐지일자":
-        localCommitteeDetail.revocatedDate = item
-          .querySelector(".txt")
-          .textContent.trim();
+        localCommitteeDetail.revocatedDate =
+          item.querySelector(".txt").textContent.trim() || null;
         break;
       case "활동여부":
         localCommitteeDetail.status = item
@@ -232,30 +231,32 @@ export const parseLocalCommittees = (html: string): LocalCommittee[] => {
 
   rows.forEach((row: any) => {
     const localCommittee: LocalCommittee = {
-      num: 0,
       category: "",
       title: "",
       roles: "",
       createdDate: "",
       department: "",
-      link: "",
+      code: "",
     };
 
     const columns = row.querySelectorAll("td");
     columns.forEach((col: any, index: number) => {
       switch (index) {
-        case 0:
-          localCommittee.num = col.textContent.trim();
-          break;
         case 1:
           localCommittee.category = col.textContent.trim();
           break;
-        case 2:
+        case 2: {
           localCommittee.title = col.textContent.trim();
-          localCommittee.link = `https://www.daejeon.go.kr${col
+          const href = `https://www.daejeon.go.kr${col
             .querySelector("a")
             .getAttribute("href")}`;
+
+          const regexResult = /acmCode=(\d+)/g.exec(href);
+          if (regexResult) {
+            localCommittee.code = regexResult[1];
+          }
           break;
+        }
         case 3:
           localCommittee.roles = col.textContent.trim();
           break;
@@ -266,10 +267,24 @@ export const parseLocalCommittees = (html: string): LocalCommittee[] => {
           localCommittee.department = col.textContent.trim();
           break;
       }
-
-      localCommittees.push(localCommittee);
     });
+
+    localCommittees.push(localCommittee);
   });
 
   return localCommittees;
+};
+
+export const parseLocalCommitteesTotalPagesCount = (html: string): number => {
+  const doc: any = new DOMParser().parseFromString(html, "text/html");
+  const links = doc.querySelectorAll("a.direction");
+  const eventHandler = links[links.length - 1].getAttribute("onclick");
+  const regex = /fn_link_page\((\d+)\)/g;
+  const totalPagesCountResult = regex.exec(eventHandler.split(";")[0]);
+
+  if (totalPagesCountResult) {
+    return +totalPagesCountResult[1];
+  }
+
+  return 0;
 };
